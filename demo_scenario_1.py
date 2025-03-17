@@ -12,6 +12,47 @@ import streamlit as st
 from datetime import datetime,time
 from PIL import Image
 
+def processar_dados():
+    csv_path = "dataset_des1/results.csv"
+    hdf5_path = "results_1.h5"
+    
+    try:
+        # Tenta ler o CSV
+        df = pd.read_csv(csv_path)
+        print("CSV encontrado. Convertendo para HDF5...")
+        
+        # Salva como HDF5 (sobrescreve se existir)
+        df.to_hdf(
+            hdf5_path,
+            key="dataset_to_sc1",
+            mode="w",
+            format="table"
+        )
+        
+    except FileNotFoundError:
+        print("CSV não encontrado. Lendo diretamente do HDF5...")
+        try:
+            # Tenta ler o HDF5 existente
+            df = pd.read_hdf(hdf5_path, key="dataset_to_sc1")
+        except Exception as e:
+            print(f"Erro ao ler HDF5: {str(e)}")
+            return None
+            
+    except Exception as e:
+        print(f"Erro inesperado: {str(e)}")
+        return None
+        
+    return df
+
+# Uso
+df = processar_dados()
+if df is not None:
+    print("Dados carregados com sucesso!")
+else:
+    print("Não foi possível carregar os dados.")
+
+
+
 df = pd.read_csv('dataset_des1/results.csv')
 
 
